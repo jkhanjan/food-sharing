@@ -6,8 +6,10 @@ import UserLogin from "../pages/auth/UserLogin";
 import FoodPartnerRegister from "../pages/auth/FoodPartnerRegister";
 import FoodPartnerLogin from "../pages/auth/FoodPartnerLogin";
 import Home from "../pages/home/Home";
+import Saved from "../pages/home/Saved";
 import CreateFood from "../pages/food-partner/CreateFood";
 import Profile from "../pages/food-partner/Profile";
+import BottomNav from "../components/BottomNav";
 const AppRoutes = () => {
   return (
     <Router>
@@ -20,7 +22,24 @@ const AppRoutes = () => {
           element={<FoodPartnerRegister />}
         />
         <Route path="/food-partner/login" element={<FoodPartnerLogin />} />
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={
+            <>
+              <Home />
+              <BottomNav />
+            </>
+          }
+        />
+        <Route
+          path="/saved"
+          element={
+            <>
+              <Saved />
+              <BottomNav />
+            </>
+          }
+        />
         <Route path="/create-food" element={<CreateFood />} />
         <Route path="/food-partner/:id" element={<Profile />} />
       </Routes>
