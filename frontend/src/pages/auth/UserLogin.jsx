@@ -1,30 +1,30 @@
 import React from "react";
 import "../../styles/auth-shared.css";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const UserLogin = () => {
-//   const navigate = useNavigate();
+  const navigate = useNavigate();
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-//     const email = e.target.email.value;
-//     const password = e.target.password.value;
+    const email = e.target.email.value;
+    const password = e.target.password.value;
 
-//     const response = await axios.post(
-//       "http://localhost:3000/api/auth/user/login",
-//       {
-//         email,
-//         password,
-//       },
-//       { withCredentials: true }
-//     );
+    const response = await axios.post(
+      "http://localhost:3000/api/auth/user/login",
+      {
+        email,
+        password,
+      },  
+      { withCredentials: true }
+    );
 
-//     console.log(response.data);
+    console.log(response.data);
 
-//     navigate("/"); // Redirect to home after login
-//   };
+    navigate("/"); 
+  };
 
   return (
     <div className="auth-page-wrapper">
@@ -41,7 +41,7 @@ const UserLogin = () => {
             Sign in to continue your food journey.
           </p>
         </header>
-        <form className="auth-form" noValidate>
+        <form className="auth-form" noValidate onSubmit={handleSubmit}>
           <div className="field-group">
             <label htmlFor="email">Email</label>
             <input
