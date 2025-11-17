@@ -9,9 +9,14 @@ const upload = multer({
 });
 
 router.post(
+  "/generate-presigned-url",
+  authMiddleware.authFoodPartnerMiddleware,
+  foodController.generateSignedUrl
+)
+
+router.post(
   "/",
   authMiddleware.authFoodPartnerMiddleware,
-  upload.single("video"),
   foodController.createFood
 );
 

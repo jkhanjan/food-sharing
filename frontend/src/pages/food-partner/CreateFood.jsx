@@ -61,35 +61,93 @@ const CreateFood = () => {
 
   const openFileDialog = () => fileInputRef.current?.click();
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    if (loading) return;
-    setLoading(true);
+  //FOR THE IMAGE KIT SUBMITION
+  // const onSubmit = async (e) => {
 
-    try {
-      const formData = new FormData();
+  //   e.preventDefault();
+  //   if (loading) return;
+  //   setLoading(true);
 
-      formData.append("name", name);
-      formData.append("description", description);
-      formData.append("video", videoFile);
+  //   try {
+  //     const formData = new FormData();
 
-      const response = await axios.post(
-        "http://localhost:3000/api/food",
-        formData,
-        {
-          withCredentials: true,
-        }
-      );
+  //     formData.append("name", name);
+  //     formData.append("description", description);
+  //     formData.append("video", videoFile);
 
-      console.log(response.data);
-      navigate("/");
-    } catch (error) {
-      console.error("There was an error registering!", error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     const response = await axios.post(
+  //       "http://localhost:3000/api/food",
+  //       formData,
+  //       {
+  //         withCredentials: true,
+  //       }
+  //     );
+
+  //     console.log(response.data);
+  //     navigate("/");
+  //   } catch (error) {
+  //     console.error("There was an error registering!", error);
+  //     setLoading(false);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+const onSubmit = async (e) => {
+  e.preventDefault();
+  if (loading) return;
+  setLoading(true);
+
+  try {
+    // Step 1: Get the file extension
+    const fileExtension = videoFile.name.split('.').pop();
+    
+    // Step 2: Get presigned URL from your backend
+    const presignedResponse = await axios.post(
+      "http://localhost:3000/api/food/generate-presigned-url",
+      {
+        fileExtension: fileExtension,
+        fileType: videoFile.type
+      },
+      {
+        withCredentials: true
+      }
+    );
+
+    const { uploadUrl, storagePath } = presignedResponse.data;
+    console.log("Presigned URL generated:", presignedResponse.data);
+
+    // Step 3: Upload video directly to Supabase using presigned URL
+    await axios.put(uploadUrl, videoFile, {
+      headers: {
+        'Content-Type': videoFile.type
+      }
+    });
+    
+    console.log("Video uploaded successfully!");
+
+    const foodResponse = await axios.post(
+      "http://localhost:3000/api/food",
+      {
+        name: name,
+        description: description,
+        videoPath: storagePath 
+      },
+      {
+        withCredentials: true
+      }
+    );
+
+    console.log("Food item created:", foodResponse.data);
+    navigate("/");
+    
+  } catch (error) {
+    console.error("Error creating food item:", error);
+    alert("Failed to create food item. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const isDisabled = useMemo(
     () => !name.trim() || !videoFile,
