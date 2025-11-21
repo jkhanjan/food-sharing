@@ -1,43 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../../styles/auth-shared.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { authService } from "../../services/authServices";
 
 const FoodPartnerRegister = () => {
-    const navigate = useNavigate();
+  const [businessName, setBusinessName] = useState("");
+  const [contactName, setContactName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [address, setAddress] = useState("");
+  const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
-      e.preventDefault();
-
-      const businessName = e.target.businessName.value;
-      const contactName = e.target.contactName.value;
-      const phone = e.target.phone.value;
-      const email = e.target.email.value;
-      const password = e.target.password.value;
-      const address = e.target.address.value;
-
-      axios
-        .post(
-          "http://localhost:3000/api/auth/food-partner/register",
-          {
-            name: businessName,
-            contactName,
-            phone,
-            email,
-            password,
-            address,
-          },
-          { withCredentials: true }
-        )
-        .then((response) => {
-          console.log(response.data);
-          navigate("/create-food"); // Redirect to create food page after successful registration
-        })
-        .catch((error) => {
-          console.error("There was an error registering!", error);
-        });
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const response = await authService.foodPartnerRegister({
+      businessName,
+      contactName,
+      phone,
+      email,
+      password,
+      address,
+    });
+    console.log(response);
+    if (response.success) {
+      navigate("/create-food");
+    }
+  };
 
   return (
     <div className="auth-page-wrapper">
@@ -65,6 +56,7 @@ const FoodPartnerRegister = () => {
               name="businessName"
               placeholder="Tasty Bites"
               autoComplete="organization"
+              onChange={(e) => setBusinessName(e.target.value)}
             />
           </div>
           <div className="two-col">
@@ -75,6 +67,7 @@ const FoodPartnerRegister = () => {
                 name="contactName"
                 placeholder="Jane Doe"
                 autoComplete="name"
+                onChange={(e) => setContactName(e.target.value)}
               />
             </div>
             <div className="field-group">
@@ -84,6 +77,7 @@ const FoodPartnerRegister = () => {
                 name="phone"
                 placeholder="+1 555 123 4567"
                 autoComplete="tel"
+                onChange={(e) => setPhone(e.target.value)}
               />
             </div>
           </div>
@@ -95,6 +89,7 @@ const FoodPartnerRegister = () => {
               type="email"
               placeholder="business@example.com"
               autoComplete="email"
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="field-group">
@@ -105,6 +100,7 @@ const FoodPartnerRegister = () => {
               type="password"
               placeholder="Create password"
               autoComplete="new-password"
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div className="field-group">
@@ -114,6 +110,7 @@ const FoodPartnerRegister = () => {
               name="address"
               placeholder="123 Market Street"
               autoComplete="street-address"
+              onChange={(e) => setAddress(e.target.value)}
             />
             <p className="small-note">
               Full address helps customers find you faster.

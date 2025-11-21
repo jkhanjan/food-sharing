@@ -1,30 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../../styles/auth-shared.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { authService } from "../../services/authServices";
 
 const UserRegister = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const firstName = e.target.firstName.value;
-    const lastName = e.target.lastName.value;
-    const email = e.target.email.value;
-    const password = e.target.password.value;
-
-    const resposne = await axios.post(
-      "http://localhost:3000/api/auth/user/register",
-      {
-        fullName: firstName + " " + lastName,
-        email,
-        password,
-      },
-      {
-        withCredentials: true,
-      }
-    );
+    const resposne = await authService.register({
+      firstName,
+      lastName,
+      email,
+      password,
+    });
     console.log(resposne.data);
     navigate("/");
   };
@@ -58,6 +52,7 @@ const UserRegister = () => {
                 name="firstName"
                 placeholder="Jane"
                 autoComplete="given-name"
+                onChange={(e) => setFirstName(e.target.value)}
               />
             </div>
             <div className="field-group">
@@ -67,6 +62,7 @@ const UserRegister = () => {
                 name="lastName"
                 placeholder="Doe"
                 autoComplete="family-name"
+                onChange={(e) => setLastName(e.target.value)}
               />
             </div>
           </div>
@@ -78,6 +74,7 @@ const UserRegister = () => {
               type="email"
               placeholder="you@example.com"
               autoComplete="email"
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="field-group">
@@ -88,6 +85,7 @@ const UserRegister = () => {
               type="password"
               placeholder="••••••••"
               autoComplete="new-password"
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <button className="auth-submit" type="submit">

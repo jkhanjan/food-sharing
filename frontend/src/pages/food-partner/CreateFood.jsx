@@ -97,12 +97,8 @@ const onSubmit = async (e) => {
   e.preventDefault();
   if (loading) return;
   setLoading(true);
-
   try {
-    // Step 1: Get the file extension
     const fileExtension = videoFile.name.split('.').pop();
-    
-    // Step 2: Get presigned URL from your backend
     const presignedResponse = await axios.post(
       "http://localhost:3000/api/food/generate-presigned-url",
       {
@@ -113,19 +109,14 @@ const onSubmit = async (e) => {
         withCredentials: true
       }
     );
-
     const { uploadUrl, storagePath } = presignedResponse.data;
     console.log("Presigned URL generated:", presignedResponse.data);
-
-    // Step 3: Upload video directly to Supabase using presigned URL
     await axios.put(uploadUrl, videoFile, {
       headers: {
         'Content-Type': videoFile.type
       }
     });
-    
     console.log("Video uploaded successfully!");
-
     const foodResponse = await axios.post(
       "http://localhost:3000/api/food",
       {

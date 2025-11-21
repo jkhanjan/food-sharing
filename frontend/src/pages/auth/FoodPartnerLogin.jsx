@@ -1,34 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import "../../styles/auth-shared.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { authService } from "../../services/authServices";
 
 const FoodPartnerLogin = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const response = await authService.foodPartnerLogin({ email, password });
 
-    const email = e.target.email.value;
-    const password = e.target.password.value;
-
-     axios
-        .post(
-          "http://localhost:3000/api/auth/food-partner/login",
-          {
-            email,
-            password,
-          },
-          { withCredentials: true }
-        )
-        .then((response) => {
-          console.log(response.data);
-          navigate("/create-food");
-        })
-        .catch((error) => {
-          console.error("There was an error registering!", error);
-        });
-  }
+    if (response.success) {
+      console.log(response.data);
+      navigate("/create-food");
+    }
+  };
   return (
     <div className="auth-page-wrapper">
       <div
@@ -53,6 +42,7 @@ const FoodPartnerLogin = () => {
               type="email"
               placeholder="business@example.com"
               autoComplete="email"
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="field-group">
@@ -63,6 +53,7 @@ const FoodPartnerLogin = () => {
               type="password"
               placeholder="Password"
               autoComplete="current-password"
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <button className="auth-submit" type="submit">

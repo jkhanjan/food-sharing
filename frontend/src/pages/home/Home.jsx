@@ -1,74 +1,82 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import "../../styles/reels.css";
 import ReelFeed from "../../components/ReelFeed";
+import { foodService } from "../../services/activityServices";
+
 const Home = () => {
   const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/food", { withCredentials: true })
-      .then((response) => {
-        console.log(response.data);
+    const loadVideos = async () => {
+      try {
+        setLoading(true);
+        const data = await foodService.getAllFoods();
+        setVideos(data.foodItems);
+        setError("");
+      } catch (err) {
+        setError(err.message);
+        console.error("Failed to load videos:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        setVideos(response.data.foodItems);
-      })
-      .catch(() => {
-        /* noop: optionally handle error */
-      });
+    loadVideos();
   }, []);
 
-  async function likeVideo(item) {
-    const response = await axios.post(
-      "http://localhost:3000/api/food/like",
-      { foodId: item._id },
-      { withCredentials: true }
-    );
+  async function handleLike(item) {
+    try {
+      const { isLiked, newCount } = await foodService.toogleLikes(item._id);
 
-    if (response.data.like) {
-      console.log("Video liked");
       setVideos((prev) =>
         prev.map((v) =>
-          v._id === item._id ? { ...v, likeCount: v.likeCount + 1 } : v
+          v._id === item._id
+            ? {
+                ...v,
+                likeCount:
+                  newCount || (isLiked ? v.likeCount + 1 : v.likeCount - 1),
+              }
+            : v
         )
       );
-    } else {
-      console.log("Video unliked");
-      setVideos((prev) =>
-        prev.map((v) =>
-          v._id === item._id ? { ...v, likeCount: v.likeCount - 1 } : v
-        )
-      );
+    } catch (err) {
+      console.error("Failed to like video:", err);
+      // Optionally show toast notification to user
     }
   }
 
-  async function saveVideo(item) {
-    const response = await axios.post(
-      "http://localhost:3000/api/food/save",
-      { foodId: item._id },
-      { withCredentials: true }
-    );
+  // Handle save/unsave
+  async function handleSave(item) {
+    try {
+      const { isSaved, newCount } = await foodService.getSavedFood(item._id);
 
-    if (response.data.save) {
       setVideos((prev) =>
         prev.map((v) =>
-          v._id === item._id ? { ...v, savesCount: v.savesCount + 1 } : v
+          v._id === item._id
+            ? {
+                ...v,
+                savesCount:
+                  newCount || (isSaved ? v.savesCount + 1 : v.savesCount - 1),
+              }
+            : v
         )
       );
-    } else {
-      setVideos((prev) =>
-        prev.map((v) =>
-          v._id === item._id ? { ...v, savesCount: v.savesCount - 1 } : v
-        )
-      );
+    } catch (err) {
+      console.error("Failed to save video:", err);
+      // Optionally show toast notification to user
     }
   }
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div className="error-message">{error}</div>;
 
   return (
     <ReelFeed
       items={videos}
-      onLike={likeVideo}
-      onSave={saveVideo}
+      onLike={handleLike}
+      onSave={handleSave}
       emptyMessage="No videos available."
     />
   );

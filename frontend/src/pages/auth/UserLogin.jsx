@@ -1,29 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import "../../styles/auth-shared.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { authService } from "../../services/authServices";
 
 const UserLogin = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    if (!email || !password) {
+      setError("Email and password are required");
+      return;
+    }
+    setIsLoading(true);
 
-    const email = e.target.email.value;
-    const password = e.target.password.value;
-
-    const response = await axios.post(
-      "http://localhost:3000/api/auth/user/login",
-      {
-        email,
-        password,
-      },  
-      { withCredentials: true }
-    );
-
-    console.log(response.data);
-
-    navigate("/"); 
+    try {
+      const response = await authService.login({ email, password });
+      if (response.success) {
+        navigate("/");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -50,6 +55,7 @@ const UserLogin = () => {
               type="email"
               placeholder="you@example.com"
               autoComplete="email"
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="field-group">
@@ -60,11 +66,13 @@ const UserLogin = () => {
               type="password"
               placeholder="••••••••"
               autoComplete="current-password"
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <button className="auth-submit" type="submit">
-            Sign In
+            {isLoading ?  "Sigining In" : "Sign In"}
           </button>
+          {error && <p className="auth-error">{error}</p>}
         </form>
         <div className="auth-alt-action">
           New here? <a href="/user/register">Create account</a>

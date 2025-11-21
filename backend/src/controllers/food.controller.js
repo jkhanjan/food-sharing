@@ -20,7 +20,7 @@ const { v4: uuid } = require("uuid");
 //     foodPartner: req.foodPartner._id,
 //   });
 //   res.status(201).json({
-//     message: "food item created successfully",
+//     message: " item created successfully",
 //     food: foodItem,
 //   });
 // }
