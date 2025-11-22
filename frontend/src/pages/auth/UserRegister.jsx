@@ -10,6 +10,7 @@ const UserRegister = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [profilePic, setProfilePic] = useState('')
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,6 +19,7 @@ const UserRegister = () => {
       lastName,
       email,
       password,
+      profilePic
     });
     console.log(resposne.data);
     navigate("/");
@@ -86,6 +88,16 @@ const UserRegister = () => {
               placeholder="••••••••"
               autoComplete="new-password"
               onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+           <div className="field-group">
+            <label htmlFor="ProfilePic">ProfilePic</label>
+            <input
+              id="ProfilePic"
+              name="ProfilePic"
+              type="ProfilePic"
+              placeholder="ProfilePic"
+              onChange={(e) => setProfilePic(e.target.value)}
             />
           </div>
           <button className="auth-submit" type="submit">

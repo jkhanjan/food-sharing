@@ -43,7 +43,6 @@ const Home = () => {
       );
     } catch (err) {
       console.error("Failed to like video:", err);
-      // Optionally show toast notification to user
     }
   }
 
@@ -65,7 +64,6 @@ const Home = () => {
       );
     } catch (err) {
       console.error("Failed to save video:", err);
-      // Optionally show toast notification to user
     }
   }
 
