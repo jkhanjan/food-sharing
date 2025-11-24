@@ -6,12 +6,14 @@ const foodPartnerRoutes = require("./routes/food-partner.routes");
 const cors = require("cors");
 
 const app = express();
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+
+app.use(cors({
+  origin: "http://localhost:5173", 
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 

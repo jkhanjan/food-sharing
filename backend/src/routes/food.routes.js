@@ -4,9 +4,9 @@ const authMiddleware = require("../middleware/auth.middleware");
 const router = express.Router();
 const multer = require("multer");
 
-const upload = multer({
-  storage: multer.memoryStorage(),
-});
+// const upload = multer({
+//   storage: multer.memoryStorage(),
+// });
 
 router.post(
   "/generate-presigned-url",

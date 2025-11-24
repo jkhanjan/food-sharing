@@ -3,9 +3,31 @@ const foodPartnerModel = require("../models/foodpartner.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const foodPartenerModel = require("../models/foodpartner.model");
+const storageService = require("../services/storage.service");
+
+async function generateSignedUrl(req, res) {
+  try {
+    const { fileType } = req.body;
+    const fileExtension = fileType.split("/")[1];
+
+    const result = await storageService.generatePresignedUploadUrl(
+      fileExtension
+    );
+
+    console.log(result, "resu");
+    res.json({
+      message: "Presigned URL generated",
+      ...result,
+    });
+  } catch (err) {
+    console.error(err, "error");
+    res.status(500).json({ error: "Could not create upload URL" });
+  }
+}
 
 async function registerUser(req, res) {
-  const { fullName, email, password } = req.body;
+  const { fullName, email, password, profileImageUrl } = req.body;
+  const profileImage = storageService.getPublicUrl(profileImageUrl);
 
   const isUserAlreradyExist = await userModel.findOne({ email });
 
@@ -21,6 +43,7 @@ async function registerUser(req, res) {
     fullName,
     email,
     password: hashedPassword,
+    profilePic: profileImage,
   });
 
   const token = jwt.sign(
@@ -98,9 +121,9 @@ async function registerFoodPartner(req, res) {
     name,
     email,
     password: hashedPassword,
-    phone, 
+    phone,
     address,
-    contactName
+    contactName,
   });
 
   const token = jwt.sign(
@@ -119,7 +142,7 @@ async function registerFoodPartner(req, res) {
       email: foodPartner.email,
       phone: foodPartner.phone,
       contactName: foodPartner.contactName,
-      address: foodPartner.address
+      address: foodPartner.address,
     },
   });
 }
@@ -174,4 +197,5 @@ module.exports = {
   registerFoodPartner,
   loginFoodPartner,
   logoutFoodPartner,
+  generateSignedUrl,
 };
