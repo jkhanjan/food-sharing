@@ -1,24 +1,28 @@
-@import './theme.css';
+@import "./theme.css";
 
 .bottom-nav {
   position: fixed;
-  left: 0; right: 0; bottom: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: 56px;
-   background: color-mix(in srgb, #000 35%, transparent);
+  background: color-mix(in srgb, #000 35%, transparent);
   backdrop-filter: blur(2px);
   color: #fff;
-  border: 1px solid rgba(255,255,255,.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: var(--shadow-md);
   border-top: 1px solid var(--color-border);
   z-index: 50;
 }
 
 .bottom-nav__inner {
-  max-width: 720px;
+  width: 100vw;
   margin: 0 auto;
+  padding: 0 25px;
   height: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .bottom-nav__item {
@@ -31,13 +35,21 @@
   gap: 2px;
 }
 
-.bottom-nav__item.is-active { color: var(--color-text); }
+.bottom-nav__item.is-active {
+  color: var(--color-text);
+}
 
-.bottom-nav__icon { line-height: 0; }
+.bottom-nav__icon {
+  line-height: 0;
+}
 
-.bottom-nav__label { font-size: 12px; }
+.bottom-nav__label {
+  font-size: 12px;
+}
 
 /* Safe area for iOS */
-@supports(padding: max(0px)) {
-  .bottom-nav { padding-bottom: max(env(safe-area-inset-bottom), 0px); }
+@supports (padding: max(0px)) {
+  .bottom-nav {
+    padding-bottom: max(env(safe-area-inset-bottom), 0px);
+  }
 }

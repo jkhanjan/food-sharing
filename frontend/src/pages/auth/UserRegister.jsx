@@ -9,8 +9,8 @@ const UserRegister = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [profilePic, setProfilePic] = useState('')
-  console.log(profilePic, 'profilepic')
+  const [profilePic, setProfilePic] = useState("");
+  console.log(profilePic, "profilepic");
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +22,7 @@ const UserRegister = () => {
       profilePic
     });
     console.log(resposne.data);
-    navigate("/");
+    if(resposne.success) navigate("/");
   };
 
   return (
@@ -90,7 +90,7 @@ const UserRegister = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-           <div className="field-group">
+          <div className="field-group">
             <label htmlFor="ProfilePic">ProfilePic</label>
             <input
               id="ProfilePic"
@@ -98,7 +98,9 @@ const UserRegister = () => {
               type="file"
               placeholder="ProfilePic"
               accept="image/*"
-              onChange={(e) => {setProfilePic(e.target.files[0])}}
+              onChange={(e) => {
+                setProfilePic(e.target.files[0]);
+              }}
             />
           </div>
           <button className="auth-submit" type="submit">
