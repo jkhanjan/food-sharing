@@ -13,8 +13,6 @@ async function generateSignedUrl(req, res) {
     const result = await storageService.generatePresignedUploadUrl(
       fileExtension
     );
-
-    console.log(result, "resu");
     res.json({
       message: "Presigned URL generated",
       ...result,
@@ -27,7 +25,7 @@ async function generateSignedUrl(req, res) {
 
 async function registerUser(req, res) {
   const { fullName, email, password, profileImageUrl } = req.body;
-  const profileImage = storageService.getPublicUrl(profileImageUrl);
+  // const profileImage = storageService.getPublicUrl(profileImageUrl);
 
   const isUserAlreradyExist = await userModel.findOne({ email });
 
@@ -66,7 +64,7 @@ async function registerUser(req, res) {
 async function loginUser(req, res) {
   const { email, password } = req.body;
 
-  const user = await userModel.findOne({ email });
+  const user = await userModel.findOne({ email }).select("+password");
 
   if (!user) {
     res.status(400).json({

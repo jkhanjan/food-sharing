@@ -56,18 +56,12 @@ const Profile = () => {
       <hr className="profile-sep" />
 
       <section className="profile-grid" aria-label="Videos">
-        {videos && videos.map((v) => (
-          <div key={v.id} className="profile-grid-item">
-            {/* Placeholder tile; replace with <video> or <img> as needed */}
-
-            <video
-              className="profile-grid-video"
-              style={{ objectFit: "cover", width: "100%", height: "100%" }}
-              src={v.video}
-              muted
-            ></video>
-          </div>
-        ))}
+        {videos &&
+          videos.map((v) => (
+            <div key={v.id} className="profile-grid-item">
+              <video className="profile-grid-video" src={v.video} muted></video>
+            </div>
+          ))}
       </section>
     </main>
   );
