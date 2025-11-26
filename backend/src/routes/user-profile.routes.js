@@ -5,7 +5,7 @@ const userProfileByIdController = require("../controllers/user-profile.controlle
 const router = express.Router();
 
 router.get(
-  "/:id",
+  "/me",
   authMiddleware.authUserMiddlware,
   userProfileByIdController.getUserProfileByID
 );

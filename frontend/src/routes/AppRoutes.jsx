@@ -41,7 +41,15 @@ const AppRoutes = () => {
             </>
           }
         />
-        <Route path="/profile" element={<UserProfile />} />
+        <Route
+          path="/profile"
+          element={
+            <>
+              <UserProfile />
+              <BottomNav />
+            </>
+          }
+        />
         <Route path="/create-food" element={<CreateFood />} />
         <Route path="/food-partner/:id" element={<Profile />} />
       </Routes>

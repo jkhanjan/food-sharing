@@ -1,18 +1,15 @@
 const userModel = require("../models/user.models");
 
 async function getUserProfileByID(req, res) {
-  const paraams = req.params.id;
-  const user = await userModel.findById(paraams);
-  if (!user) {
-    return res.status(404).json({
-      message: "user not found",
+  try {
+    res.status(200).json({
+      message: "User fetched successfully",
+      user: req.user,
     });
+  } catch (error) {
+    console.error(error, "error");
+    res.status(500).json({ message: "Server error", error });
   }
-
-  res.status(200).json({
-    message: "user fetched successfully",
-    user,
-  });
 }
 
 module.exports = {

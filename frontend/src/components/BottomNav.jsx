@@ -32,14 +32,13 @@ const BottomNav = () => {
           <span className="bottom-nav__label">Home</span>
         </NavLink>
 
-        <NavLink
+        {/* <NavLink
           to="/saved"
           className={({ isActive }) =>
             `bottom-nav__item ${isActive ? "is-active" : ""}`
           }
         >
           <span className="bottom-nav__icon" aria-hidden="true">
-            {/* bookmark icon */}
             <svg
               width="20"
               height="20"
@@ -54,7 +53,7 @@ const BottomNav = () => {
             </svg>
           </span>
           <span className="bottom-nav__label">Saved</span>
-        </NavLink>
+        </NavLink> */}
 
         <NavLink
           to="/profile"
