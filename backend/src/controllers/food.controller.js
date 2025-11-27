@@ -113,6 +113,20 @@ async function likeFoodController(req, res) {
   });
 }
 
+async function getLikedFoods(req, res) {
+  const user = req.user;
+  const likedFood = await likeModel.find({ user: user._id }).populate("food");
+  if (!likedFood && likedFood.length === 0) {
+    return res.status(404).json({
+      message: " liked food not found",
+    });
+  }
+  res.status(200).json({
+    message: "liked food fetched successfully",
+    likedFood,
+  });
+}
+
 async function saveFood(req, res) {
   const { foodId } = req.body;
   const user = req.user;
@@ -164,4 +178,5 @@ module.exports = {
   saveFood,
   getSaveFood,
   generateSignedUrl,
+  getLikedFoods,
 };

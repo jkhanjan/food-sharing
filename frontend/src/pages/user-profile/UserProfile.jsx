@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Saved from "../home/Saved";
+import Liked from "../home/Liked";
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -17,7 +18,6 @@ const UserProfile = () => {
 
     getUserDetails();
   }, []);
-  console.log(user, "user");
 
   return (
     <main className="profile-page">
@@ -38,7 +38,8 @@ const UserProfile = () => {
 
       <hr className="profile-sep" />
 
-        <Saved />
+        {/* <Saved /> */}
+        <Liked />
     </main>
   );
 };
