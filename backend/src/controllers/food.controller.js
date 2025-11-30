@@ -78,6 +78,8 @@ async function likeFoodController(req, res) {
   const { foodId } = req.body;
   const user = req.user;
 
+  const io = req.app.get("io");
+
   const isAlreadyLiked = await likeModel.findOne({
     food: foodId,
     user: user._id,
@@ -89,12 +91,23 @@ async function likeFoodController(req, res) {
       food: foodId,
     });
 
-    await foodModel.findByIdAndUpdate(foodId, {
-      $inc: { likeCount: -1 },
+    const updatedFood = await foodModel.findByIdAndUpdate(
+      foodId,
+      { $inc: { likeCount: -1 } },
+      { new: true }
+    );
+
+    io.emit("food:likeUpdate", {
+      foodId,
+      likeCount: updatedFood.likeCount,
+      liked: false,
+      userId: user._id,
     });
 
     return res.status(200).json({
       message: "food unliked successfully",
+      likeCount: updatedFood.likeCount,
+      liked: false,
     });
   }
 
@@ -103,13 +116,24 @@ async function likeFoodController(req, res) {
     food: foodId,
   });
 
-  await foodModel.findByIdAndUpdate(foodId, {
-    $inc: { likeCount: 1 },
+  const updatedFood = await foodModel.findByIdAndUpdate(
+    foodId,
+    { $inc: { likeCount: 1 } },
+    { new: true }
+  );
+
+  io.emit("food:likeUpdate", {
+    foodId,
+    likeCount: updatedFood.likeCount,
+    liked: true,
+    userId: user._id,
   });
 
   res.status(201).json({
     message: "food liked successfully",
     like,
+    likeCount: updatedFood.likeCount,
+    liked: true,
   });
 }
 

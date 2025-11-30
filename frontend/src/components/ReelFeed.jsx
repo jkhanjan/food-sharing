@@ -1,19 +1,41 @@
 import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-
-// Reusable feed for vertical reels
-// Props:
-// - items: Array of video items { _id, video, description, likeCount, savesCount, commentsCount, comments, foodPartner }
-// - onLike: (item) => void | Promise<void>
-// - onSave: (item) => void | Promise<void>
-// - emptyMessage: string
+import { socket } from "../services/socketConnection";
+import { useState } from "react";
 const ReelFeed = ({
   items = [],
   onLike,
   onSave,
   emptyMessage = "No videos yet.",
 }) => {
+  const [reelitem, setReelitem] = useState(items);
+  console.log(reelitem);
   const videoRefs = useRef(new Map());
+
+  useEffect(() => {
+    setReelitem(items);
+  }, [items]);
+
+  useEffect(() => {
+    const handleLikeUpdate = (data) => {
+      console.log("Like update received:", data);
+      setReelitem((prevItems) =>
+        prevItems.map((item) =>
+          item._id === data.foodId || item.id === data.foodId
+            ? {
+                ...item,
+                likeCount: data.likeCount,
+                isLiked: data.liked,
+              }
+            : item
+        )
+      );
+    };
+    socket.on("food:likeUpdate", handleLikeUpdate);
+    return () => {
+      socket.off("food:likeUpdate", handleLikeUpdate);
+    };
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -22,9 +44,7 @@ const ReelFeed = ({
           const video = entry.target;
           if (!(video instanceof HTMLVideoElement)) return;
           if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
-            video.play().catch(() => {
-              /* ignore autoplay errors */
-            });
+            video.play().catch(() => {});
           } else {
             video.pause();
           }
@@ -48,13 +68,13 @@ const ReelFeed = ({
   return (
     <div className="reels-page">
       <div className="reels-feed" role="list">
-        {items.length === 0 && (
+        {reelitem.length === 0 && (
           <div className="empty-state">
             <p>{emptyMessage}</p>
           </div>
         )}
 
-        {items.map((item) => (
+        {reelitem.map((item) => (
           <section key={item._id} className="reel" role="listitem">
             <video
               ref={setVideoRef(item._id)}
