@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/reels.css";
 import axios from "axios";
-import ReelFeed from "../../components/ReelFeed";
-
 const Saved = () => {
   const [videos, setVideos] = useState([]);
 
@@ -43,11 +41,17 @@ const Saved = () => {
   };
 
   return (
-    <ReelFeed
-      items={videos}
-      onSave={removeSaved}
-      emptyMessage="No saved videos yet."
-    />
+    <>
+      <p>Saved</p>
+      <section className="profile-grid" aria-label="Videos">
+        {videos &&
+          videos.map((v) => (
+            <div key={v.id} className="profile-grid-item">
+              <video className="profile-grid-video" src={v.video} muted></video>
+            </div>
+          ))}
+      </section>
+    </>
   );
 };
 

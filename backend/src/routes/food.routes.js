@@ -4,9 +4,9 @@ const authMiddleware = require("../middleware/auth.middleware");
 const router = express.Router();
 const multer = require("multer");
 
-const upload = multer({
-  storage: multer.memoryStorage(),
-});
+// const upload = multer({
+//   storage: multer.memoryStorage(),
+// });
 
 router.post(
   "/generate-presigned-url",
@@ -27,6 +27,12 @@ router.post(
   authMiddleware.authUserMiddlware,
   foodController.likeFoodController
 );
+router.get(
+  "/like",
+  authMiddleware.authUserMiddlware,
+  foodController.getLikedFoods
+);
+
 
 router.post("/save", authMiddleware.authUserMiddlware, foodController.saveFood);
 router.get(

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../../styles/auth-shared.css";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../../services/authServices";
 
@@ -10,7 +9,8 @@ const UserRegister = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [profilePic, setProfilePic] = useState('')
+  const [profilePic, setProfilePic] = useState("");
+  console.log(profilePic, "profilepic");
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +22,7 @@ const UserRegister = () => {
       profilePic
     });
     console.log(resposne.data);
-    navigate("/");
+    if(resposne.success) navigate("/");
   };
 
   return (
@@ -90,14 +90,17 @@ const UserRegister = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-           <div className="field-group">
+          <div className="field-group">
             <label htmlFor="ProfilePic">ProfilePic</label>
             <input
               id="ProfilePic"
               name="ProfilePic"
-              type="ProfilePic"
+              type="file"
               placeholder="ProfilePic"
-              onChange={(e) => setProfilePic(e.target.value)}
+              accept="image/*"
+              onChange={(e) => {
+                setProfilePic(e.target.files[0]);
+              }}
             />
           </div>
           <button className="auth-submit" type="submit">

@@ -15,7 +15,12 @@ export const foodService = {
         likeCount: response.data.likeCount,
       };
     } catch (error) {
-      alert(error);
+      if (error?.response?.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/user/login";
+        return;
+      }
+      throw error;
     }
   },
 
@@ -26,7 +31,12 @@ export const foodService = {
       });
       return response.data;
     } catch (error) {
-      return error;
+      if (error?.response?.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/user/login";
+        return;
+      }
+      throw error;
     }
   },
 
@@ -42,7 +52,12 @@ export const foodService = {
         savedCount: response.data.savesCount,
       };
     } catch (error) {
-      return error;
+      if (error?.response?.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/user/login";
+        return;
+      }
+      throw error;
     }
   },
 };

@@ -32,14 +32,13 @@ const BottomNav = () => {
           <span className="bottom-nav__label">Home</span>
         </NavLink>
 
-        <NavLink
+        {/* <NavLink
           to="/saved"
           className={({ isActive }) =>
             `bottom-nav__item ${isActive ? "is-active" : ""}`
           }
         >
           <span className="bottom-nav__icon" aria-hidden="true">
-            {/* bookmark icon */}
             <svg
               width="20"
               height="20"
@@ -54,6 +53,31 @@ const BottomNav = () => {
             </svg>
           </span>
           <span className="bottom-nav__label">Saved</span>
+        </NavLink> */}
+
+        <NavLink
+          to="/profile"
+          className={({ isActive }) =>
+            `bottom-nav__item ${isActive ? "is-active" : ""}`
+          }
+        >
+          <span className="bottom-nav__icon" aria-hidden="true">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="7" r="4" />
+              <path d="M5.5 21a6.5 6.5 0 0 1 13 0" />
+            </svg>
+          </span>
+
+          <span className="bottom-nav__label">Profile</span>
         </NavLink>
       </div>
     </nav>
