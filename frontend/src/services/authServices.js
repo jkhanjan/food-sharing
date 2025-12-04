@@ -49,8 +49,20 @@ export const authService = {
     }
   },
 
+  getProfile: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/api/user-profile/me`, {
+        withCredentials: true,
+      });
+      return { success: true, data: response.data };
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "not able to get the data";
+      return { success: false, error: message };
+    }
+  },
+
   login: async (userData) => {
-    console.log(userData);
     try {
       const response = await axios.post(
         `${BASE_URL}/api/auth/user/login`,

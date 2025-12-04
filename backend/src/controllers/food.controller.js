@@ -82,12 +82,12 @@ async function likeFoodController(req, res) {
 
   const isAlreadyLiked = await likeModel.findOne({
     food: foodId,
-    user: user._id,
+    user: user?._id || user.id,
   });
 
   if (isAlreadyLiked) {
     await likeModel.deleteOne({
-      user: user._id,
+      user: user?._id || user.id,
       food: foodId,
     });
 
@@ -97,7 +97,7 @@ async function likeFoodController(req, res) {
       { new: true }
     );
 
-    io.emit("food:likeUpdate", {
+    io.to(`food:${foodId}`).emit("food:likeUpdate", {
       foodId,
       likeCount: updatedFood.likeCount,
       liked: false,
@@ -122,7 +122,7 @@ async function likeFoodController(req, res) {
     { new: true }
   );
 
-  io.emit("food:likeUpdate", {
+  io.to(`food:${foodId}`).emit("food:likeUpdate", {
     foodId,
     likeCount: updatedFood.likeCount,
     liked: true,

@@ -17,8 +17,15 @@ const io = new Server(server, {
 app.set("io", io);
 
 io.on("connection", (socket) => {
-  console.log("user connected", socket.id);
+  socket.on("joinRoom", ({ foodId }) => {
+    socket.join(`food:${foodId}`);
+    console.log(`User with ID: ${socket.id} joined room food:${foodId}`);
+  });
 
+  socket.on("leaveRoom", ({ foodId }) => {
+    socket.leave(`food:${foodId}`);
+    console.log(`User with ID: ${socket.id} left room food:${foodId}`);
+  });
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);
   });
