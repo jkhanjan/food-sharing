@@ -26,25 +26,25 @@ const Home = () => {
     loadVideos();
   }, []);
 
-  async function handleLike(item) {
-    try {
-      const { isLiked, newCount } = await foodService.toogleLikes(item._id);
+    async function handleLike(item) {
+      try {
+        const { isLiked, newCount } = await foodService.toogleLikes(item._id);
 
-      setVideos((prev) =>
-        prev.map((v) =>
-          v._id === item._id
-            ? {
-                ...v,
-                likeCount:
-                  newCount || (isLiked ? v.likeCount + 1 : v.likeCount - 1),
-              }
-            : v
-        )
-      );
-    } catch (err) {
-      console.error("Failed to like video:", err);
+        setVideos((prev) =>
+          prev.map((v) =>
+            v._id === item._id
+              ? {
+                  ...v,
+                  likeCount:
+                    newCount || (isLiked ? v.likeCount + 1 : v.likeCount - 1),
+                }
+              : v
+          )
+        );
+      } catch (err) {
+        console.error("Failed to like video:", err);
+      }
     }
-  }
 
   // Handle save/unsave
   async function handleSave(item) {

@@ -1,24 +1,7 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Saved from "../home/Saved";
-
+import Liked from "../home/Liked";
+import { useAuth } from "../../context/AuthContext";
 const UserProfile = () => {
-  const [user, setUser] = useState(null);
-  useEffect(() => {
-    async function getUserDetails() {
-      const response = await axios.get(
-        `http://localhost:3000/api/user-profile/me`,
-        {
-          withCredentials: true,
-        }
-      );
-      setUser(response.data.user);
-    }
-
-    getUserDetails();
-  }, []);
-  console.log(user, "user");
-
+  const { user } = useAuth();
   return (
     <main className="profile-page">
       <section className="profile-header">
@@ -37,8 +20,7 @@ const UserProfile = () => {
       </section>
 
       <hr className="profile-sep" />
-
-        <Saved />
+      <Liked />
     </main>
   );
 };

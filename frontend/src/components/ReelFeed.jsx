@@ -1,41 +1,89 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { socket } from "../services/socketConnection";
+import { useAuth } from "../context/AuthContext";
 
-// Reusable feed for vertical reels
-// Props:
-// - items: Array of video items { _id, video, description, likeCount, savesCount, commentsCount, comments, foodPartner }
-// - onLike: (item) => void | Promise<void>
-// - onSave: (item) => void | Promise<void>
-// - emptyMessage: string
 const ReelFeed = ({
   items = [],
   onLike,
   onSave,
   emptyMessage = "No videos yet.",
 }) => {
-  const videoRefs = useRef(new Map());
+  const [reelitem, setReelitem] = useState(items);
+  const { user } = useAuth();
+  const currentUserId = user?._id || user?.id;
 
+  const videoRefs = useRef(new Map());
+  const [activeFoodId, setActiveFoodId] = useState(null);
+  const previousId = useRef(null);
+
+  /** ------------------------------
+   * Sync local items on prop change
+   --------------------------------*/
+  useEffect(() => {
+    setReelitem(items);
+  }, [items]);
+
+  /** ------------------------------
+   * Socket: Handle like updates
+   --------------------------------*/
+  useEffect(() => {
+    const handleLikeUpdate = (data) => {
+      setReelitem((prevItems) =>
+        prevItems.map((item) =>
+          item._id === data.foodId || item.id === data.foodId
+            ? {
+                ...item,
+                likeCount: data.likeCount,
+                isLiked:
+                  data.userId === currentUserId ? data.liked : item.isLiked,
+              }
+            : item
+        )
+      );
+    };
+
+    socket.on("food:likeUpdate", handleLikeUpdate);
+    return () => socket.off("food:likeUpdate", handleLikeUpdate);
+  }, [currentUserId]);
+
+  /** ------------------------------
+   * Intersection Observer
+   * Detect which video is active
+   --------------------------------*/
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const video = entry.target;
+          const id = video.dataset.id;
+
           if (!(video instanceof HTMLVideoElement)) return;
+
           if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
-            video.play().catch(() => {
-              /* ignore autoplay errors */
-            });
+            video.play().catch(() => {});
+            setActiveFoodId(id); // 🔥 KEY PART
           } else {
             video.pause();
           }
         });
       },
-      { threshold: [0, 0.25, 0.6, 0.9, 1] }
+      { threshold: [0.6] }
     );
 
     videoRefs.current.forEach((vid) => observer.observe(vid));
+
     return () => observer.disconnect();
   }, [items]);
+
+  useEffect(() => {
+    if (!activeFoodId) return;
+    if (previousId.current && previousId.current !== activeFoodId) {
+      socket.emit("leaveRoom", { foodId: previousId.current });
+    }
+    socket.emit("joinRoom", { foodId: activeFoodId });
+    previousId.current = activeFoodId;
+  }, [activeFoodId]);
 
   const setVideoRef = (id) => (el) => {
     if (!el) {
@@ -48,15 +96,16 @@ const ReelFeed = ({
   return (
     <div className="reels-page">
       <div className="reels-feed" role="list">
-        {items.length === 0 && (
+        {reelitem.length === 0 && (
           <div className="empty-state">
             <p>{emptyMessage}</p>
           </div>
         )}
 
-        {items.map((item) => (
+        {reelitem.map((item) => (
           <section key={item._id} className="reel" role="listitem">
             <video
+              data-id={item._id}
               ref={setVideoRef(item._id)}
               className="reel-video"
               src={item.video}
@@ -68,6 +117,7 @@ const ReelFeed = ({
 
             <div className="reel-overlay">
               <div className="reel-overlay-gradient" aria-hidden="true" />
+
               <div className="reel-actions">
                 <div className="reel-action-group">
                   <button
@@ -116,7 +166,6 @@ const ReelFeed = ({
                     {item.savesCount ?? item.bookmarks ?? item.saves ?? 0}
                   </div>
                 </div>
-
                 <div className="reel-action-group">
                   <button className="reel-action" aria-label="Comments">
                     <svg
@@ -143,6 +192,7 @@ const ReelFeed = ({
                 <p className="reel-description" title={item.description}>
                   {item.description}
                 </p>
+
                 {item.foodPartner && (
                   <Link
                     className="reel-btn"
