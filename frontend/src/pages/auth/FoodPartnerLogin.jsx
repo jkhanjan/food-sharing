@@ -14,7 +14,6 @@ const FoodPartnerLogin = () => {
     const response = await authService.foodPartnerLogin({ email, password });
 
     if (response.success) {
-      console.log(response.data);
       navigate("/create-food");
     }
   };
