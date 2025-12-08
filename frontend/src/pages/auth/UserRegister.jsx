@@ -10,7 +10,6 @@ const UserRegister = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [profilePic, setProfilePic] = useState("");
-  console.log(profilePic, "profilepic");
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
