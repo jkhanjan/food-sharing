@@ -30,7 +30,7 @@ async function createFood(req, res) {
   try {
     const { name, description, videoPath } = req.body;
     const videoUrl = storageService.getPublicUrl(videoPath);
-    console.log(videoUrl);
+    // console.log(videoUrl);
     const foodItem = await foodModel.create({
       name,
       description,

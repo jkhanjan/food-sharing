@@ -16,9 +16,6 @@ export const authService = {
         );
 
         const { uploadUrl, fileUrl } = data;
-        console.log(data, "data");
-        console.log("Presigned URL generated:", uploadUrl);
-        console.log("Final image URL:", fileUrl);
 
         await axios.put(uploadUrl, userData.profilePic, {
           headers: {
@@ -30,7 +27,6 @@ export const authService = {
 
         uploadedImageUrl = fileUrl;
       }
-
       const response = await axios.post(
         `${BASE_URL}/api/auth/user/register`,
         {

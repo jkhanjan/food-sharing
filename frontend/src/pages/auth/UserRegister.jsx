@@ -20,7 +20,6 @@ const UserRegister = () => {
       password,
       profilePic
     });
-    console.log(resposne.data);
     if(resposne.success) navigate("/");
   };
 
