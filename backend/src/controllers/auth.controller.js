@@ -25,8 +25,6 @@ async function generateSignedUrl(req, res) {
 
 async function registerUser(req, res) {
   const { fullName, email, password, profileImageUrl } = req.body;
-  // const profileImage = storageService.getPublicUrl(profileImageUrl);
-
   const isUserAlreradyExist = await userModel.findOne({ email });
 
   if (isUserAlreradyExist) {
@@ -41,9 +39,8 @@ async function registerUser(req, res) {
     fullName,
     email,
     password: hashedPassword,
-    profilePic: profileImage,
+    profilePic: profileImageUrl,
   });
-
   const token = jwt.sign(
     {
       id: user._id,
