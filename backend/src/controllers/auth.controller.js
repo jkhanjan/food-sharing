@@ -10,9 +10,8 @@ async function generateSignedUrl(req, res) {
     const { fileType } = req.body;
     const fileExtension = fileType.split("/")[1];
 
-    const result = await storageService.generatePresignedUploadUrl(
-      fileExtension
-    );
+    const result =
+      await storageService.generatePresignedUploadUrl(fileExtension);
     res.json({
       message: "Presigned URL generated",
       ...result,
@@ -45,7 +44,8 @@ async function registerUser(req, res) {
     {
       id: user._id,
     },
-    process.env.JWT_SECRET
+    process.env.JWT_SECRET,
+    { expiresIn: "24h" },
   );
 
   res.cookie("token", token);
@@ -80,7 +80,10 @@ async function loginUser(req, res) {
     {
       id: user._id,
     },
-    process.env.JWT_SECRET
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "24h",
+    }
   );
   res.cookie("token", token);
 
@@ -126,7 +129,8 @@ async function registerFoodPartner(req, res) {
     {
       id: foodPartner._id,
     },
-    process.env.JWT_SECRET
+    process.env.JWT_SECRET,
+    {expiresIn: "24h"},
   );
 
   res.cookie("token", token);
@@ -165,7 +169,10 @@ async function loginFoodPartner(req, res) {
     {
       id: user._id,
     },
-    process.env.JWT_SECRET
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "24h",
+    }
   );
   res.cookie("token", token);
 
