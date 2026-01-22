@@ -11,7 +11,6 @@ const CreateFood = () => {
   const [fileError, setFileError] = useState("");
   const fileInputRef = useRef(null);
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -93,56 +92,55 @@ const CreateFood = () => {
   //   }
   // };
 
-const onSubmit = async (e) => {
-  e.preventDefault();
-  if (loading) return;
-  setLoading(true);
-  try {
-    const fileExtension = videoFile.name.split('.').pop();
-    const presignedResponse = await axios.post(
-      "http://localhost:3000/api/food/generate-presigned-url",
-      {
-        fileExtension: fileExtension,
-        fileType: videoFile.type
-      },
-      {
-        withCredentials: true
-      }
-    );
-    const { uploadUrl, storagePath } = presignedResponse.data;
-    console.log("Presigned URL generated:", presignedResponse.data);
-    await axios.put(uploadUrl, videoFile, {
-      headers: {
-        'Content-Type': videoFile.type
-      }
-    });
-    console.log("Video uploaded successfully!");
-    const foodResponse = await axios.post(
-      "http://localhost:3000/api/food",
-      {
-        name: name,
-        description: description,
-        videoPath: storagePath 
-      },
-      {
-        withCredentials: true
-      }
-    );
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    if (loading) return;
+    setLoading(true);
+    try {
+      const fileExtension = videoFile.name.split(".").pop();
+      const presignedResponse = await axios.post(
+        "http://localhost:3000/api/food/generate-presigned-url",
+        {
+          fileExtension: fileExtension,
+          fileType: videoFile.type,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+      const { uploadUrl, storagePath } = presignedResponse.data;
+      console.log("Presigned URL generated:", presignedResponse.data);
+      await axios.put(uploadUrl, videoFile, {
+        headers: {
+          "Content-Type": videoFile.type,
+        },
+      });
+      console.log("Video uploaded successfully!");
+      const foodResponse = await axios.post(
+        "http://localhost:3000/api/food",
+        {
+          name: name,
+          description: description,
+          videoPath: storagePath,
+        },
+        {
+          withCredentials: true,
+        },
+      );
 
-    console.log("Food item created:", foodResponse.data);
-    navigate("/");
-    
-  } catch (error) {
-    console.error("Error creating food item:", error);
-    alert("Failed to create food item. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+      console.log("Food item created:", foodResponse.data);
+      navigate("/");
+    } catch (error) {
+      console.error("Error creating food item:", error);
+      alert("Failed to create food item. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const isDisabled = useMemo(
     () => !name.trim() || !videoFile,
-    [name, videoFile]
+    [name, videoFile],
   );
 
   return (
@@ -242,6 +240,9 @@ const onSubmit = async (e) => {
                     onClick={() => {
                       setVideoFile(null);
                       setFileError("");
+                      if (fileInputRef.current) {
+                        fileInputRef.current.value = "";
+                      }
                     }}
                   >
                     Remove
@@ -250,7 +251,7 @@ const onSubmit = async (e) => {
               </div>
             )}
           </div>
-
+          
           {videoURL && (
             <div className="video-preview">
               <video
@@ -292,7 +293,11 @@ const onSubmit = async (e) => {
               type="submit"
               disabled={isDisabled || loading}
             >
-              {loading ? <span className="spinner">Saving food</span> : "Save Food"}
+              {loading ? (
+                <span className="spinner">Saving food</span>
+              ) : (
+                "Save Food"
+              )}
             </button>
           </div>
         </form>
